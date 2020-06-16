@@ -145,9 +145,9 @@ var email = &emailer{&notifications.Notification{
 		Placeholder: "sendto@email.com",
 		DbField:     "Var2",
 	}, {
-		Type:        "text",
+		Type:        "switch",
 		Title:       "Disable TLS/SSL",
-		Placeholder: "",
+		Placeholder: "true",
 		SmallText:   "To Disable TLS/SSL insert 'true'",
 		DbField:     "api_key",
 	}}},

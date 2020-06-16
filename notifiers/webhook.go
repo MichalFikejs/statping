@@ -32,8 +32,8 @@ var Webhook = &webhooker{&notifications.Notification{
 	AuthorUrl:   "https://github.com/hunterlong",
 	Icon:        "fas fa-code-branch",
 	Delay:       time.Duration(1 * time.Second),
-	SuccessData: `{"id": {{.Service.Id}}, "online": true}`,
-	FailureData: `{"id": {{.Service.Id}}, "online": false}`,
+	SuccessData: `{"id": "{{.Service.Id}}", "online": true}`,
+	FailureData: `{"id": "{{.Service.Id}}", "online": false}`,
 	DataType:    "json",
 	Limits:      180,
 	Form: []notifications.NotificationForm{{
@@ -44,12 +44,13 @@ var Webhook = &webhooker{&notifications.Notification{
 		DbField:     "Host",
 		Required:    true,
 	}, {
-		Type:        "text",
+		Type:        "list",
 		Title:       "HTTP Method",
 		Placeholder: "POST",
 		SmallText:   "Choose a HTTP method for example: GET, POST, DELETE, or PATCH.",
 		DbField:     "Var1",
 		Required:    true,
+		ListOptions: []string{"GET", "POST", "PATCH", "DELETE"},
 	}, {
 		Type:        "text",
 		Title:       "Content Type",

@@ -2,17 +2,34 @@
     <div class="col-12">
         <h2>{{service.name}} Checkins</h2>
         <p class="mb-3">Tell your service to send a routine HTTP request to a Statping Checkin.</p>
-        <div v-for="(checkin, i) in checkins" class="col-12 alert alert-light" role="alert">
+        <div v-for="(checkin, i) in checkins" class="col-12 alert alert-light shadow-sm">
             <span class="badge badge-pill badge-info text-uppercase">{{checkin.name}}</span>
-            <span class="float-right font-2">Last checkin {{ago(checkin.last_hit)}}</span>
-            <span class="float-right font-2 mr-3">Check Every {{checkin.interval}} seconds</span>
-            <span class="float-right font-2 mr-3">Grace Period {{checkin.grace}} seconds</span>
-            <span class="d-block mt-2">
-                <input type="text" class="form-control" :value="`${core.domain}/checkin/${checkin.api_key}`" readonly>
-                <span class="small">Send a GET request to this URL every {{checkin.interval}} seconds
-                    <button @click="deleteCheckin(checkin)" type="button" class="btn btn-danger btn-xs float-right mt-1">Delete</button>
-                </span>
-            </span>
+            <span class="float-right font-2 mt-1">Last checkin {{ago(checkin.last_hit)}}</span>
+            <span class="float-right font-2 mr-3 mt-1">Check Every {{checkin.interval}} seconds</span>
+            <span class="float-right font-2 mr-3 mt-1">Grace Period {{checkin.grace}} seconds</span>
+            <div class="d-block mt-3">
+
+                <div class="input-group">
+                    <input :value="`${core.domain}/checkin/${checkin.api_key}`" type="text" class="form-control select-input" readonly/>
+                    <div class="input-group-append copy-btn">
+                        <button @click="copy(`${core.domain}/checkin/${checkin.api_key}`)" class="btn btn-outline-secondary" type="button">Copy</button>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+
+                    <div class="col-8">
+                        <span class="small">
+                            Send a GET request to this URL every {{checkin.interval}} seconds
+                        </span>
+                    </div>
+
+                    <div class="col-4">
+                        <button @click="deleteCheckin(checkin)" type="button" class="btn btn-danger btn-xs float-right">Delete</button>
+                    </div>
+
+                </div>
+            </div>
         </div>
 
         <div class="col-12 alert alert-light">

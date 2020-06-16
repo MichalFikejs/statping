@@ -1,4 +1,8 @@
 <template>
+    <div>
+        <div class="card text-black-50 bg-white">
+            <div class="card-header">Statping Settings</div>
+            <div class="card-body">
     <form @submit.prevent="saveSettings">
         <div class="form-group">
             <label>{{ $t('settings.name') }}</label>
@@ -60,6 +64,37 @@
         </button>
 
     </form>
+            </div>
+        </div>
+
+        <div class="card text-black-50 bg-white mt-3">
+            <div class="card-header">API Settings</div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">API Secret</label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <input v-model="core.api_secret" @focus="$event.target.select()" type="text" class="form-control select-input" id="api_secret" readonly>
+                            <div class="input-group-append copy-btn">
+                                <button @click="copy(core.api_secret)" class="btn btn-outline-secondary" type="button">Copy</button>
+                            </div>
+                        </div>
+                        <small class="form-text text-muted">API Secret is used for read, create, update and delete routes</small>
+                        <small class="form-text text-muted">You can <a href="#" id="regenkeys" @click="renewApiKeys">Regenerate API Keys</a> if you need to.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card text-black-50 bg-white mt-3">
+            <div class="card-header">QR Code for Mobile App</div>
+            <div class="card-body">
+
+                <img class="rounded" width="300" height="300" :src="qrcode">
+
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -69,7 +104,9 @@
       name: 'CoreSettings',
     data () {
       return {
-        loading: false
+        loading: false,
+        qrcode: "",
+        qrurl: "",
       }
     },
       computed: {
@@ -77,7 +114,29 @@
               return this.$store.getters.core
           }
       },
-      methods: {
+    mounted() {
+        this.update()
+    },
+    methods: {
+        async update() {
+          const c = await Api.core()
+          this.$store.commit('setCore', c)
+          const n = await Api.notifiers()
+          this.$store.commit('setNotifiers', n)
+
+          this.qrurl = `statping://setup?domain=${c.domain}&api=${c.api_secret}`
+          this.qrcode = "https://chart.googleapis.com/chart?chs=500x500&cht=qr&chl=" + encodeURI(this.qrurl)
+          this.cache = await Api.cache()
+        },
+      async renewApiKeys() {
+        let r = confirm("Are you sure you want to reset the API keys?");
+        if (r === true) {
+          await Api.renewApiKeys()
+          const core = await Api.core()
+          this.$store.commit('setCore', core)
+          this.core = core
+        }
+      },
           async saveSettings() {
             this.loading = true
               const c = this.core

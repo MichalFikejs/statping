@@ -1,10 +1,15 @@
 <template>
-    <div>
+    <div class="card text-black-50 bg-white mb-5">
+        <div class="card-header">Theme Editor</div>
+        <div class="card-body">
             <div v-if="loaded && !directory" class="jumbotron jumbotron-fluid">
                 <div class="text-center col-12">
                     <h1 class="display-5">Enable Local Assets</h1>
-                    <span class="lead">Customize your status page design by enabling local assets. This will create a 'assets' directory containing all CSS.<p>
-                        <button id="enable_assets" @click.prevent="createAssets" :disabled="pending" href="#" class="btn btn-primary mt-3">Enable Local Assets</button>
+                    <span class="lead">Customize your status page design by enabling local assets. This will create a 'assets' directory containing all CSS.
+                        <p>
+                        <button id="enable_assets" @click.prevent="createAssets" :disabled="pending" class="btn btn-primary mt-3">
+                            <font-awesome-icon v-if="pending" icon="circle-notch" class="mr-2" spin/>Enable Local Assets
+                        </button>
                     </p></span>
                 </div>
         </div>
@@ -20,13 +25,18 @@
 
         <div v-if="error" class="alert alert-danger mt-3" style="white-space: pre-line;">{{error}}</div>
 
-        <button id="save_assets" @submit.prevent="saveAssets" type="submit" class="btn btn-primary btn-block mt-2" :disabled="pending">{{pending ? "Saving..." : "Save Style"}}</button>
-        <button id="delete_assets" v-if="directory" @click.prevent="deleteAssets" href="#" class="btn btn-danger btn-block confirm-btn" :disabled="pending">Delete Local Assets</button>
+        <button id="save_assets" @submit.prevent="saveAssets" type="submit" class="btn btn-primary btn-block mt-2" :disabled="pending">
+            {{pending ? "Saving..." : "Save Style"}}
+        </button>
+        <button id="delete_assets" v-if="directory" @click.prevent="deleteAssets" href="#" class="btn btn-danger btn-block confirm-btn" :disabled="pending">
+            Delete Local Assets
+        </button>
 
         <h6 id="assets_dir" class="text-muted text-monospace text-sm-center font-1 mt-3">
             Asset Directory: {{directory}}
         </h6>
     </form>
+    </div>
     </div>
 </template>
 

@@ -14,7 +14,16 @@
 
         <div v-for="(form, index) in notifier.form" v-bind:key="index" class="form-group">
             <label class="text-capitalize">{{form.title}}</label>
-            <input v-if="form.type === 'text' || 'number' || 'password'" v-model="notifier[form.field.toLowerCase()]" :type="form.type" class="form-control" :placeholder="form.placeholder" >
+            <input v-if="isInput(form.type)" v-model="notifier[form.field.toLowerCase()]" :type="form.type" class="form-control" :placeholder="form.placeholder" >
+
+            <select v-if="form.type==='list'" class="form-control d-block" v-model="notifier[form.field.toLowerCase()]">
+                <option v-for="(k, i) in form.list_options" :value="k">{{k}}</option>
+            </select>
+
+            <span v-if="form.type==='switch'" @click="notifier[form.field.toLowerCase()] == !!notifier[form.field.toLowerCase()]" class="switch switch-rd-gr float-right mt-2">
+                <input v-model="notifier[form.field.toLowerCase()]" type="checkbox" class="switch-sm" :id="`${form.field.toLowerCase()}_${notifier.method}`" v-bind:checked="notifier[form.field.toLowerCase()]">
+                <label class="mb-0" :for="`${form.field.toLowerCase()}_${notifier.method}`"></label>
+            </span>
 
             <small class="form-text text-muted" v-html="form.small_text"></small>
         </div>
@@ -37,7 +46,7 @@
                 <span class="badge badge-dark float-right text-uppercase mt-1">{{notifier.data_type}}</span>
             </div>
             <div class="card-body">
-                <span class="text-muted d-block mb-3" v-if="notifier.request_info" v-html="notifier.request_info"></span>
+                <p class="small text-muted d-block mb-3" v-if="notifier.request_info" v-html="notifier.request_info"/>
 
         <div class="row" v-observe-visibility="visible">
             <div class="col-12">
@@ -101,7 +110,7 @@
             </div>
         </div>
 
-        <span class="d-block small text-center mb-3">
+        <span v-if="notifier.author_url" class="d-block small text-center mb-3">
             <span class="text-capitalize">{{notifier.title}}</span> Notifier created by <a :href="notifier.author_url" target="_blank">{{notifier.author}}</a>
         </span>
 
@@ -155,7 +164,7 @@ export default {
                 theme: 'neat',
                 mode: "mymode",
                 lineWrapping: true,
-                json: true,
+                json: this.notifier.data_type === "json",
                 autoRefresh: true,
                 mime: this.notifier.data_type === "json" ? "application/json" : "text/plain"
               },
@@ -166,6 +175,12 @@ export default {
 
       },
     methods: {
+      isInput(type) {
+        if (type === "text" || type === "number"|| type === "email") {
+          return true
+        }
+        return false
+      },
       visible(isVisible, entry) {
         if (isVisible) {
           this.$refs.cmfailure.codemirror.refresh()
@@ -173,13 +188,21 @@ export default {
         }
       },
       onCmSuccessReady(cm) {
-        this.success_data = beautify(this.notifier.success_data, this.beautifySettings)
+        let data = this.notifier.success_data
+        if (this.notifier.data_type === "json") {
+          data = beautify(this.notifier.success_data, this.beautifySettings)
+        }
+        this.success_data = data
         setTimeout(function() {
           cm.refresh();
         },1);
       },
       onCmFailureReady(cm) {
-        this.failure_data = beautify(this.notifier.failure_data, this.beautifySettings)
+        let data = this.notifier.failure_data
+        if (this.notifier.data_type === "json") {
+          data = beautify(this.notifier.failure_data, this.beautifySettings)
+        }
+        this.failure_data = data
         setTimeout(function() {
           cm.refresh();
         },1);

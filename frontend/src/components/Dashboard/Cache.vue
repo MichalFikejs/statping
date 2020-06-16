@@ -1,6 +1,15 @@
 <template>
-    <div>
-        <table class="table">
+    <div class="card text-black-50 bg-white mb-5">
+        <div class="card-header">
+            Cache
+        </div>
+        <div class="card-body">
+
+            <span v-if="!cache" class="text-muted">
+                There's currently nothing being cached!
+            </span>
+
+        <table v-if="cache" class="table">
             <thead>
             <tr>
                 <th scope="col">URL</th>
@@ -18,7 +27,8 @@
 
             </tbody>
         </table>
-        <button @click.prevent="clearCache" class="btn btn-danger btn-block">Clear Cache</button>
+        <button v-if="cache" @click.prevent="clearCache" class="btn btn-danger btn-block">Clear Cache</button>
+    </div>
     </div>
 </template>
 
@@ -33,7 +43,13 @@ export default {
           }
       },
       async mounted() {
-          this.cache = await Api.cache()
+        this.cache = await Api.cache()
+      },
+      async created() {
+        this.cache = await Api.cache()
+      },
+      computed: {
+
       },
       methods: {
           async clearCache() {

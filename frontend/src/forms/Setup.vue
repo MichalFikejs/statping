@@ -27,13 +27,13 @@
                             </select>
                         </div>
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-8">
                                 <div v-if="setup.db_connection !== 'sqlite'" class="form-group">
                                     <label class="text-capitalize">{{ $t('setup.host') }}</label>
                                     <input @keyup="canSubmit" v-model="setup.db_host" id="db_host" type="text" class="form-control" placeholder="localhost">
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-4">
                                 <div v-if="setup.db_connection !== 'sqlite'" class="form-group">
                                     <label class="text-capitalize">{{ $t('port') }}</label>
                                     <input @keyup="canSubmit" v-model="setup.db_port" id="db_port" type="number" class="form-control" placeholder="5432">
@@ -49,7 +49,7 @@
                             <input @keyup="canSubmit" v-model="setup.db_password" id="db_password" type="password" class="form-control" placeholder="password123">
                         </div>
                         <div v-if="setup.db_connection !== 'sqlite'" class="form-group">
-                            <label for="db_database" class="text-capitalize">{{ $t('database') }}</label>
+                            <label for="db_database" class="text-capitalize">{{ $t('setup.database') }}</label>
                             <input @keyup="canSubmit" v-model="setup.db_database" id="db_database" type="text" class="form-control" placeholder="Database name">
                         </div>
 
@@ -204,12 +204,15 @@
     async saveSetup() {
       this.loading = true
       const s = this.setup
-      if (s.password !== s.confirm_password) {
-        alert('Passwords do not match!')
+
+      let resp
+      try {
+        resp = await Api.setup_save(s)
+      } catch(e) {
+        this.error = e.response.data.error
         this.loading = false
         return
       }
-      const resp = await Api.setup_save(s)
       if (resp.status === 'error') {
         this.error = resp.error
         this.loading = false
